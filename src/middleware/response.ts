@@ -9,24 +9,22 @@ export default function response(
     data: T,
     message = "Success",
     status = 200,
-    meta = null,
+    meta?: unknown,
   ) => {
     return res.status(status).json({
       success: true,
       message: message,
       data: data,
-      meta: meta,
-      errors: null,
+      ...(meta !== undefined && { meta }),
     });
   };
 
-  res.error = (message = "Error", status = 500, errors: unknown = null) => {
+  res.error = (message = "Error", status = 500, errors?: unknown) => {
     return res.status(status).json({
       success: false,
       message: message,
       data: null,
-      meta: null,
-      errors,
+      ...(errors !== undefined && { errors }),
     });
   };
 

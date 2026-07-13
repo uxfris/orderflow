@@ -14,13 +14,11 @@ app.use(cors());
 app.use(express.json());
 
 app.use(morgan("dev"));
+app.use(response);
 
 app.use("/api", routes);
 
 app.use(notFound);
-
 app.use(errorHandler);
-
-app.use(response);
 
 export default app;
