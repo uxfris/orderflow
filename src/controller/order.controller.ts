@@ -1,27 +1,19 @@
-import type { NextFunction, Request, Response } from "express";
+import { asyncHandler } from "../utils/async-handler.js";
+import * as service from "../services/order.service.js";
+import type { CreateOrderDTO } from "../validators/order.validator.js";
+import type { Request } from "express";
 
-export async function getOrders(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {}
-export async function getOrder(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {}
-export async function createOrder(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {}
-export async function updateOrder(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {}
-export async function deleteOrder(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {}
+export const getOrders = asyncHandler(async (req, res) => {});
+export const getOrder = asyncHandler(async (req, res) => {});
+export const createOrder = asyncHandler<Request<{}, {}, CreateOrderDTO>>(
+  async (req, res) => {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.error("User not found", 404);
+    }
+    const order = await service.createOrder(userId, req.body);
+    res.success(order);
+  },
+);
+export const updateOrder = asyncHandler(async (req, res) => {});
+export const deleteOrder = asyncHandler(async (req, res) => {});

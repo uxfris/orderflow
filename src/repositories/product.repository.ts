@@ -11,6 +11,17 @@ export async function findAll() {
     },
   });
 }
+
+export async function findManyByIds(ids: string[]) {
+  return prisma.product.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+}
+
 export async function findById(id: string) {
   return prisma.product.findUnique({
     where: { id },

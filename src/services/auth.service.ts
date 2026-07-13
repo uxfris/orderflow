@@ -111,7 +111,7 @@ export async function refreshToken(refreshToken: string) {
 
   const user = await userRepository.findById(payload.sub);
   if (!user) {
-    throw AppError.notFound("User not found");
+    throw AppError.unauthroized("User not found");
   }
   const accessTokenPayload: AccessTokenPayload = {
     sub: user.id,

@@ -60,7 +60,7 @@ model Order {
   status     OrderStatus
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")
-  orderItems OrderItem[]
+  items      OrderItem[]
 
   @@index([userId, createdAt])
   @@index([status])
