@@ -5,7 +5,5 @@ export default function notFound(
   res: Response,
   next: NextFunction,
 ) {
-  res.status(404).json({
-    message: "Route not found",
-  });
+  res.error("Route not found", 404);
 }

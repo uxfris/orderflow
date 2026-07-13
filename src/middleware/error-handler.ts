@@ -8,12 +8,8 @@ export default function errorHandler(
   next: NextFunction,
 ) {
   if (err instanceof AppError) {
-    return res.status(err.status).json({
-      message: err.message,
-    });
+    return res.error(err.message, err.status);
   }
 
-  res.status(500).json({
-    message: "Internal Server Error",
-  });
+  res.error("Internal Server Error", 500);
 }
