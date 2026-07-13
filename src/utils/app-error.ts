@@ -25,4 +25,7 @@ export default class AppError extends Error {
   static internal(message = "Internal Server Error") {
     return new AppError(500, message);
   }
+  static unauthroized(message: string) {
+    return new AppError(401, message);
+  }
 }
