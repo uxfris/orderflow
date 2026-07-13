@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   Product: 'Product',
   Order: 'Order',
+  OrderItem: 'OrderItem',
   RefreshToken: 'RefreshToken'
 } as const
 
@@ -108,6 +109,18 @@ export const OrderScalarFieldEnum = {
 } as const
 
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+export const OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  quantity: 'quantity',
+  price: 'price',
+  subtotal: 'subtotal'
+} as const
+
+export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
 
 
 export const RefreshTokenScalarFieldEnum = {

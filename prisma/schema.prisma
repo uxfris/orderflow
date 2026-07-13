@@ -32,12 +32,13 @@ model User {
 }
 
 model Product {
-  id        String   @id @default(cuid())
-  name      String
-  price     Int
-  stock     Int
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id         String      @id @default(cuid())
+  name       String
+  price      Int
+  stock      Int
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  orderItems OrderItem[]
 
   @@index([name])
   @@map("products")
@@ -58,11 +59,28 @@ model Order {
   totalPrice Int         @map("total_price")
   status     OrderStatus
   createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @default(now()) @map("updated_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  orderItems OrderItem[]
 
   @@index([userId, createdAt])
   @@index([status])
   @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String  @map("order_id")
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity Int
+  price    Int //product price during checkout
+  subtotal Int
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
 }
 
 model RefreshToken {
