@@ -3,11 +3,16 @@ import * as service from "../services/product.service.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import type {
   CreateProductDTO,
+  GetProductsQueryDTO,
   UpdateProductDTO,
 } from "../validators/product.validator.js";
+import type { ValidatedQueryLocals } from "../middleware/validate-query.js";
 
-export const getProducts = asyncHandler(async (req, res) => {
-  const products = await service.getProducts();
+export const getProducts = asyncHandler<
+  Request,
+  Response<unknown, ValidatedQueryLocals<GetProductsQueryDTO>>
+>(async (req, res) => {
+  const products = await service.getProducts(res.locals.validatedQuery);
   res.success(products);
 });
 

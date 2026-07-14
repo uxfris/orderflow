@@ -1,13 +1,23 @@
 import { prisma } from "../config/database.js";
 import type {
   CreateProductDTO,
+  GetProductsQueryDTO,
   UpdateProductDTO,
 } from "../validators/product.validator.js";
 
-export async function findAll() {
+export async function findAll(query: GetProductsQueryDTO, offset: number) {
+  const { limit, search, sortBy, order } = query;
   return prisma.product.findMany({
+    skip: offset,
+    take: limit,
+    where: {
+      name: {
+        contains: search,
+        mode: "insensitive",
+      },
+    },
     orderBy: {
-      createdAt: "asc",
+      [sortBy]: order,
     },
   });
 }

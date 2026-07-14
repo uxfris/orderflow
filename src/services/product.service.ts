@@ -2,11 +2,14 @@ import * as repository from "../repositories/product.repository.js";
 import AppError from "../utils/app-error.js";
 import type {
   CreateProductDTO,
+  GetProductsQueryDTO,
   UpdateProductDTO,
 } from "../validators/product.validator.js";
 
-export async function getProducts() {
-  return repository.findAll();
+export async function getProducts(query: GetProductsQueryDTO) {
+  const { page, limit } = query;
+  const offset = (page - 1) * limit;
+  return repository.findAll(query, offset);
 }
 export async function getProduct(id: string) {
   const product = await repository.findById(id);
