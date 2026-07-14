@@ -57,7 +57,7 @@ export async function signin(data: AuthSigninDTO) {
   return {
     access_token: accessToken,
     refresh_token: refreshToken,
-    safeUser,
+    user: safeUser,
   };
 }
 

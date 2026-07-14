@@ -7,7 +7,7 @@ export const getOrders = asyncHandler(async (req, res) => {});
 export const getOrder = asyncHandler(async (req, res) => {});
 export const createOrder = asyncHandler<Request<{}, {}, CreateOrderDTO>>(
   async (req, res) => {
-    const userId = req.user?.id;
+    const userId = req.user?.sub;
     if (!userId) {
       return res.error("User not found", 404);
     }
