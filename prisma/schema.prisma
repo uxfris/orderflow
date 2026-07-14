@@ -53,14 +53,16 @@ enum OrderStatus {
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  userId     String      @map("user_id")
-  user       User        @relation(fields: [userId], references: [id])
-  totalPrice Int         @map("total_price")
-  status     OrderStatus
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @updatedAt @map("updated_at")
-  items      OrderItem[]
+  id           String      @id @default(cuid())
+  userId       String      @map("user_id")
+  user         User        @relation(fields: [userId], references: [id])
+  totalPrice   Int         @map("total_price")
+  status       OrderStatus
+  cancelReason String?     @map("cancel_reason")
+  cancelledAt  DateTime?   @map("cancelled_at")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  items        OrderItem[]
 
   @@index([userId, createdAt])
   @@index([status])

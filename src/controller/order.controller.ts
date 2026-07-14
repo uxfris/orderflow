@@ -1,10 +1,22 @@
 import { asyncHandler } from "../utils/async-handler.js";
 import * as service from "../services/order.service.js";
-import type { CreateOrderDTO } from "../validators/order.validator.js";
+import type {
+  CancelReasonDTO,
+  CreateOrderDTO,
+  UpdateOrderStatusDTO,
+} from "../validators/order.validator.js";
 import type { Request } from "express";
 
-export const getOrders = asyncHandler(async (req, res) => {});
-export const getOrder = asyncHandler(async (req, res) => {});
+export const getOrders = asyncHandler(async (req, res) => {
+  const orders = await service.getOrders();
+  res.success(orders);
+});
+export const getOrder = asyncHandler<Request<{ id: string }>>(
+  async (req, res) => {
+    const order = await service.getOrder(req.params.id);
+    res.success(order);
+  },
+);
 export const createOrder = asyncHandler<Request<{}, {}, CreateOrderDTO>>(
   async (req, res) => {
     const userId = req.user?.sub;
@@ -15,5 +27,16 @@ export const createOrder = asyncHandler<Request<{}, {}, CreateOrderDTO>>(
     res.success(order);
   },
 );
-export const updateOrder = asyncHandler(async (req, res) => {});
-export const deleteOrder = asyncHandler(async (req, res) => {});
+export const updateOrderStatus = asyncHandler<
+  Request<{ id: string }, {}, UpdateOrderStatusDTO>
+>(async (req, res) => {
+  const result = await service.updateOrderStatus(req.params.id, req.body);
+  res.success(result);
+});
+
+export const cancelOrder = asyncHandler<
+  Request<{ id: string }, {}, CancelReasonDTO>
+>(async (req, res) => {
+  const result = await service.cancelOrder(req.params.id, req.body.reason);
+  res.success(result);
+});

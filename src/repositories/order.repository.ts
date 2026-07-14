@@ -1,4 +1,38 @@
 import { prisma } from "../config/database.js";
+import type { Prisma } from "../generated/prisma/client.js";
+import type { UpdateOrderStatusDTO } from "../validators/order.validator.js";
+
+type OrderWithItems = Prisma.OrderGetPayload<{
+  include: {
+    items: true;
+  };
+}>;
+
+export async function findAll() {
+  return prisma.order.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+}
+
+export async function findById(id: string) {
+  return prisma.order.findUnique({
+    where: { id },
+  });
+}
+export async function findByIdWithItems(id: string) {
+  return prisma.order.findUnique({
+    where: { id },
+    include: {
+      items: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
+}
 
 export async function create(data: {
   userId: string;
@@ -46,6 +80,46 @@ export async function create(data: {
             product: true,
           },
         },
+      },
+    });
+  });
+}
+
+export async function updateStatus(id: string, data: UpdateOrderStatusDTO) {
+  return prisma.order.update({
+    where: { id },
+    data: {
+      status: data.status,
+    },
+  });
+}
+
+export async function cancelOrder(order: OrderWithItems, reason: string) {
+  return prisma.$transaction(async (tx) => {
+    await Promise.all(
+      order.items.map((item) =>
+        tx.product.update({
+          where: {
+            id: item.productId,
+          },
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        }),
+      ),
+    );
+
+    return tx.order.update({
+      where: {
+        id: order.id,
+        status: "PENDING",
+      },
+      data: {
+        status: "CANCELLED",
+        cancelReason: reason,
+        cancelledAt: new Date(),
       },
     });
   });

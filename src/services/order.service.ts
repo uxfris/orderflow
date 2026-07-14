@@ -1,10 +1,21 @@
-import type { CreateOrderDTO } from "../validators/order.validator.js";
+import type {
+  CreateOrderDTO,
+  UpdateOrderStatusDTO,
+} from "../validators/order.validator.js";
 import * as productRepository from "../repositories/product.repository.js";
 import * as orderRepository from "../repositories/order.repository.js";
 import AppError from "../utils/app-error.js";
 
-export async function getOrders() {}
-export async function getOrder() {}
+export async function getOrders() {
+  return await orderRepository.findAll();
+}
+export async function getOrder(id: string) {
+  const order = await orderRepository.findByIdWithItems(id);
+  if (!order) {
+    throw AppError.notFound("Order not found");
+  }
+  return order;
+}
 export async function createOrder(userId: string, data: CreateOrderDTO) {
   const productIds = data.items.map((i) => i.productId);
 
@@ -38,5 +49,40 @@ export async function createOrder(userId: string, data: CreateOrderDTO) {
     items: orderItems,
   });
 }
-export async function updateOrder() {}
-export async function deleteOrder() {}
+export async function updateOrderStatus(
+  id: string,
+  data: UpdateOrderStatusDTO,
+) {
+  const order = await orderRepository.findById(id);
+  if (!order) {
+    throw AppError.notFound("Order not found");
+  }
+  if (order.status === "CANCELLED") {
+    throw AppError.badRequest("Cancelled order cannot be updated");
+  }
+  if (order.status === "DELIVERED") {
+    throw AppError.badRequest("Delivered order cannot be updated");
+  }
+  const allowedTransitions = {
+    PENDING: ["PROCESSING"],
+    PROCESSING: ["SHIPPED"],
+    SHIPPED: ["DELIVERED"],
+    DELIVERED: [],
+    CANCELLED: [],
+  };
+  if (!allowedTransitions[order.status].includes(data.status)) {
+    throw AppError.badRequest("Invalid status transition");
+  }
+  return await orderRepository.updateStatus(id, data);
+}
+
+export async function cancelOrder(id: string, reason: string) {
+  const order = await orderRepository.findByIdWithItems(id);
+  if (!order) {
+    throw AppError.notFound("Order not found");
+  }
+  if (order.status !== "PENDING") {
+    throw AppError.badRequest("Order cannot be cancelled");
+  }
+  return await orderRepository.cancelOrder(order, reason);
+}
