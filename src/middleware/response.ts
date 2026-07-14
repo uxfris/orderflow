@@ -1,17 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
-import snakecaseKeys from "snakecase-keys";
 
 export default function response(
   req: Request,
   res: Response,
   next: NextFunction,
 ): void {
-  const originalJson = res.json.bind(res);
-
-  res.json = function (body: any) {
-    return originalJson(snakecaseKeys(body, { deep: true }));
-  };
-
   res.success = <T>(
     data: T,
     message = "Success",
