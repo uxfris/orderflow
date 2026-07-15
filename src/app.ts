@@ -8,6 +8,8 @@ import errorHandler from "./middleware/error-handler.js";
 import response from "./middleware/response.js";
 import cookieParser from "cookie-parser";
 import { limiter } from "./middleware/limiter.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 
 const app = express();
 
@@ -20,6 +22,7 @@ app.use(morgan("dev"));
 
 app.use(limiter);
 app.use(response);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", routes);
 
 app.use(notFound);
