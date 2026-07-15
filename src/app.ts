@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import { limiter } from "./middleware/limiter.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
+import { httpLogger } from "./logger/http-logger.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(morgan("dev"));
+app.use(httpLogger);
 
 app.use(limiter);
 app.use(response);
