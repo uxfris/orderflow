@@ -1,6 +1,6 @@
 import app from "./app.js";
 import { prisma } from "./config/database.js";
-import redis from "./config/redis.js";
+// import redis from "./config/redis.js";
 
 const server = app.listen(3001, () => {
   console.log("Server running at http://localhost:3001");
@@ -12,7 +12,7 @@ async function shutdown(signal: string) {
   server.close(async () => {
     try {
       await prisma.$disconnect();
-      await redis.quit();
+      // await redis.quit();
       process.exit(0);
     } catch (err) {
       console.error("Error during shutdown:", err);
