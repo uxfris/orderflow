@@ -14,7 +14,9 @@ export const getProductsQuerySchema = z.object({
   order: z.enum(["asc", "desc"]).default("asc"),
 });
 
-export const updateProductSchema = createProductSchema.partial();
+export const updateProductSchema = createProductSchema.partial().extend({
+  version: z.coerce.number().int().positive(),
+});
 
 export type CreateProductDTO = z.infer<typeof createProductSchema>;
 export type UpdateProductDTO = z.infer<typeof updateProductSchema>;

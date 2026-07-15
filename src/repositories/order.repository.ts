@@ -1,3 +1,4 @@
+import { gte } from "zod";
 import { prisma } from "../config/database.js";
 import type { Prisma } from "../generated/prisma/client.js";
 import type { UpdateOrderStatusDTO } from "../validators/order.validator.js";
@@ -63,8 +64,8 @@ export async function create(data: {
     });
 
     for (const item of data.items) {
-      await tx.product.update({
-        where: { id: item.productId },
+      await tx.product.updateMany({
+        where: { id: item.productId, stock: { gte: item.quantity } },
         data: {
           stock: {
             decrement: item.quantity,

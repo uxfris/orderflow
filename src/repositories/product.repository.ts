@@ -43,9 +43,9 @@ export async function create(data: CreateProductDTO) {
   return prisma.product.create({ data });
 }
 export async function update(id: string, data: UpdateProductDTO) {
-  return prisma.product.update({
-    where: { id },
-    data,
+  return prisma.product.updateMany({
+    where: { id, version: data.version },
+    data: { ...data, version: { increment: 1 } },
   });
 }
 export async function remove(id: string) {
