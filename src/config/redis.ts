@@ -1,3 +1,13 @@
+// config/redis.ts
+
+import IORedis from "ioredis";
+
+export const connection = new IORedis.default({
+  host: process.env.REDIS_HOST,
+  port: Number(process.env.REDIS_PORT),
+  maxRetriesPerRequest: null,
+});
+
 // import { RedisClient, createClient } from "redis";
 // import env from "./env.js";
 // import AppError from "../utils/app-error.js";

@@ -4,7 +4,9 @@ import type {
 } from "../validators/order.validator.js";
 import * as productRepository from "../repositories/product.repository.js";
 import * as orderRepository from "../repositories/order.repository.js";
+import { findById as findUserById } from "../repositories/user.repository.js";
 import AppError from "../utils/app-error.js";
+import { emailQueue } from "../queues/email.queue.js";
 
 export async function getOrders() {
   return await orderRepository.findAll();
@@ -43,11 +45,33 @@ export async function createOrder(userId: string, data: CreateOrderDTO) {
     };
   });
 
-  return await orderRepository.create({
+  const order = await orderRepository.create({
     userId,
     totalPrice,
     items: orderItems,
   });
+
+  if (!order) {
+    throw AppError.conflict("Failed to create order");
+  }
+
+  const user = await findUserById(userId);
+  await emailQueue.add(
+    "send-confirmation",
+    {
+      email: user?.email,
+      orderId: order.id,
+    },
+    {
+      attempts: 5,
+      backoff: {
+        type: "exponential",
+        delay: 1000,
+      },
+    },
+  );
+
+  return order;
 }
 export async function updateOrderStatus(
   id: string,
