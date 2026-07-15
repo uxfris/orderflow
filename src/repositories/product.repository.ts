@@ -11,6 +11,7 @@ export async function findAll(query: GetProductsQueryDTO, offset: number) {
     skip: offset,
     take: limit,
     where: {
+      deletedAt: null,
       name: {
         contains: search,
         mode: "insensitive",
@@ -25,6 +26,7 @@ export async function findAll(query: GetProductsQueryDTO, offset: number) {
 export async function findManyByIds(ids: string[]) {
   return prisma.product.findMany({
     where: {
+      deletedAt: null,
       id: {
         in: ids,
       },
@@ -34,7 +36,7 @@ export async function findManyByIds(ids: string[]) {
 
 export async function findById(id: string) {
   return prisma.product.findUnique({
-    where: { id },
+    where: { id, deletedAt: null },
   });
 }
 export async function create(data: CreateProductDTO) {
@@ -47,7 +49,8 @@ export async function update(id: string, data: UpdateProductDTO) {
   });
 }
 export async function remove(id: string) {
-  return prisma.product.delete({
+  return prisma.product.update({
     where: { id },
+    data: { deletedAt: new Date() },
   });
 }

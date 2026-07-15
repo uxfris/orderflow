@@ -6,6 +6,7 @@ import type {
 
 export async function findAll() {
   return prisma.user.findMany({
+    where: { deletedAt: null },
     orderBy: {
       createdAt: "asc",
     },
@@ -14,13 +15,13 @@ export async function findAll() {
 }
 export async function findById(id: string) {
   return prisma.user.findUnique({
-    where: { id },
+    where: { id, deletedAt: null },
     omit: { password: true },
   });
 }
 export async function findByEmail(email: string) {
   return prisma.user.findUnique({
-    where: { email },
+    where: { email, deletedAt: null },
   });
 }
 export async function create(data: CreateUserDTO) {
@@ -37,7 +38,8 @@ export async function update(id: string, data: UpdateUserDTO) {
   });
 }
 export async function remove(id: string) {
-  return prisma.user.delete({
+  return prisma.user.update({
     where: { id },
+    data: { deletedAt: new Date() },
   });
 }
