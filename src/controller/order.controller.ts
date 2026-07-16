@@ -24,7 +24,7 @@ export const createOrder = asyncHandler<Request<{}, {}, CreateOrderDTO>>(
       return res.error("User not found", 404);
     }
     const order = await service.createOrder(userId, req.body);
-    res.success(order);
+    res.success(order, "Order created", 201);
   },
 );
 export const updateOrderStatus = asyncHandler<

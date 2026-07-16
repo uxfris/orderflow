@@ -5,7 +5,7 @@ const itemsSchema = z.object({
   quantity: z.coerce.number().int().positive(),
 });
 export const createOrderSchema = z.object({
-  items: z.array(itemsSchema),
+  items: z.array(itemsSchema).nonempty(),
 });
 
 export const updateOrderStatusSchema = z.object({

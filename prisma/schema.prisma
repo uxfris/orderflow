@@ -58,7 +58,7 @@ enum OrderStatus {
 model Order {
   id           String      @id @default(cuid())
   userId       String      @map("user_id")
-  user         User        @relation(fields: [userId], references: [id])
+  user         User        @relation(fields: [userId], references: [id], onDelete: Restrict)
   totalPrice   Int         @map("total_price")
   status       OrderStatus
   cancelReason String?     @map("cancel_reason")
@@ -75,9 +75,9 @@ model Order {
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   String  @map("order_id")
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String  @map("product_id")
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
   quantity Int
   price    Int //product price during checkout
@@ -92,7 +92,7 @@ model RefreshToken {
   id        String    @id @default(cuid())
   jti       String    @unique
   userId    String    @map("user_id")
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   revokedAt DateTime? @map("revoked_at")
   expiredAt DateTime? @map("expired_at")
   createdAt DateTime  @default(now()) @map("created_at")
